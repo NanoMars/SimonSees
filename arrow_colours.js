@@ -5,7 +5,7 @@ https://sprig.hackclub.com/gallery/getting_started
 @title: arrow colours
 @author: 
 @tags: []
-@addedOn: 2024-00-00
+@addedOn: 2024-07-30
 */
 
 
@@ -34,13 +34,29 @@ const left_blue = "v"
 const left = [left_yellow, left_red, left_green, left_blue]
 
 const directions = [up, right, down, left]
-mode = 1
 
-const sequence = [up[0],down[3],left[1],right[3],right[3]]
+
+const sequence = [up[0]]
 
 sequence_loc = 0
 
-//sequence.append(directions[math.random(4)][math.random(4)])
+const left_hint = "o"
+const right_hint = "p"
+
+const yellow_display = "i"
+const red_display = "l"
+const green_display = "k"
+const blue_display = "j"
+
+const up_display = "7"
+const right_display = "8"
+const down_display = "9"
+const left_display = "0"
+
+
+
+
+
 
 setLegend(
   [ up_yellow, bitmap`
@@ -315,13 +331,182 @@ setLegend(
 .....777........
 ......77........
 .......7........` ],
-  
+  [ left_hint, bitmap`
+.......LL.......
+......LLLL......
+.....LLLLLL.....
+.......LL.......
+.......LL.......
+..L....LL....L..
+.LL..........LL.
+LLLLLL....LLLLLL
+LLLLLL....LLLLLL
+.LL..........LL.
+..L....LL....L..
+.......LL.......
+.......LL.......
+.....LLLLLL.....
+......LLLL......
+.......LL.......` ],
+  [ right_hint, bitmap`
+......6666......
+.....666666.....
+.....666666.....
+.....666666.....
+.....666666.....
+.7777.6666.3333.
+777777....333333
+777777....333333
+777777....333333
+777777....333333
+.7777.4444.3333.
+.....444444.....
+.....444444.....
+.....444444.....
+.....444444.....
+......4444......` ],
+  [ yellow_display, bitmap`
+................
+..........666...
+.........66666..
+....6666666666..
+...66666666666..
+..66666666666...
+..6666666666....
+.66666666666....
+.6666666666666..
+66666666666666..
+666666666666666.
+666666666666666.
+.66666666666666.
+......66...666..
+................
+................` ],
+  [ red_display, bitmap`
+.......3........
+................
+.333.3...333....
+..3333.3.3333...
+3.33333333333...
+3333333333333...
+333333333333....
+.33333333333....
+..333333333.....
+..3333333333....
+...33333333.3...
+..33333333333...
+..333333333333..
+...3333.3.3333..
+..33333..333....
+...3333.........` ],
+  [ green_display, bitmap`
+................
+.....44.........
+....4444........
+..4444444.......
+..44444444..4...
+.4444444444444..
+.4444444444444..
+.44444444444444.
+.44444444444444.
+.44444444444444.
+..4444444444444.
+....44444444444.
+......44..4444..
+......44...44...
+......4.........
+......4.........` ],
+  [ blue_display, bitmap`
+...7777.77......
+..77777777.7....
+.777777777......
+.777...777......
+.7777...........
+.77777777.......
+.777777777777...
+.7777777777777..
+.7777777777777..
+.77777777777777.
+.77777777777777.
+.77777777777777.
+..777777777777..
+..777777777777..
+....7777777.....
+................` ],
+  [ up_display, bitmap`
+.......LL.......
+......LL2L......
+.....LLLL2L.....
+....LLLLLLLL....
+...LLLLLLLLLL...
+..LLLLLLLLLLLL..
+.LLLLLLLLLLLLLL.
+LLLLLLLLLLLLLLLL
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....` ],
+  [ right_display, bitmap`
+........L.......
+........LL......
+........LLL.....
+........LLLL....
+........LLLLL...
+LLLLLLLLLLLLLL..
+LLLLLLLLLLLLLLL.
+LLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLL2L
+LLLLLLLLLLLLL2L.
+LLLLLLLLLLLLLL..
+........LLLLL...
+........LLLL....
+........LLL.....
+........LL......
+........L.......` ],
+  [ down_display, bitmap`
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+.....LLLLLL.....
+LLLLLLLLLLLLLLLL
+.LLLLLLLLLLLLLL.
+..LLLLLLLLLLLL..
+...LLLLLLLLLL...
+....LLLLLLLL....
+.....L2LLLL.....
+......L2LL......
+.......LL.......` ],
+  [ left_display, bitmap`
+.......L........
+......LL........
+.....LLL........
+....LLLL........
+...LLLLL........
+..LLLLLLLLLLLLLL
+.L2LLLLLLLLLLLLL
+L2LLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLL
+.LLLLLLLLLLLLLLL
+..LLLLLLLLLLLLLL
+...LLLLL........
+....LLLL........
+.....LLL........
+......LL........
+.......L........` ],
 )
 
-level = map`
+display = map`
 ...
 .${sequence[sequence_loc]}.
-...`
+o.p`
 
 input_direction = null
 
@@ -329,7 +514,34 @@ input_colour = null
 
 input_sequence_loc = 0
 
-function converter(){
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function play_sequence() {
+  let wait_time = 1500; // Convert seconds to milliseconds
+  for (let i = 0; i < sequence.length; i++) {
+    let no_display = map`...
+    ...
+    o.p`;
+    setMap(no_display);
+    await wait(wait_time / 10);
+    let display = map`...
+    .${sequence[i]}.
+    o.p`;
+    setMap(display);
+    await wait(wait_time); // Wait before continuing to the next iteration
+    wait_time *= 0.8; // Update wait_time for the next iteration
+  }
+  input_sequence_loc = 0
+  sequence_loc = 0
+  let display = map`...
+  ...
+  o.p`;
+  setMap(display);
+}
+
+async function converter(){
   console.log(input_direction)
   console.log(input_colour)
   if (input_direction && input_colour != null) {
@@ -337,19 +549,21 @@ function converter(){
     if (input_direction[input_colour] == sequence[input_sequence_loc]) {
       console.log("input_direction[input_colour] == sequence[input_sequence_loc]")
 
-      level = map`...
+      display = map`...
       .${input_direction[input_colour]}.
-      ...`
-      setMap(level)
+      o.p`
+      setMap(display)
       
       input_direction = null
       input_colour = null
       
       input_sequence_loc += 1
-      if (input_sequence_loc >= sequence.length - 1) {
+      if (input_sequence_loc >= sequence.length) {
+        // wait here
+        await wait(500); // Wait for 500 milliseconds
         sequence.push(directions[Math.floor(Math.random() * 4)][Math.floor(Math.random() * 4)]); // add one random thingy 
-        //play sequence
-        console.log("input_sequence_loc >= sequence.length - 1")
+        play_sequence()
+        console.log("input_sequence_loc >= sequence.length")
       }
     } else {
       //fail
@@ -357,49 +571,93 @@ function converter(){
   }
 }
 
-setMap(level)
+setMap(display)
 
 
 
 onInput("w", () => {
   input_direction = up
-  converter()
-})
-
-onInput("a", () => {
-  input_direction = left
-  converter()
-})
-
-onInput("s", () => {
-  input_direction = down
+  
+  display = map`...
+  .7.
+  o.p`
+  setMap(display)
   converter()
 })
 
 onInput("d", () => {
   input_direction = right
+  
+  display = map`...
+  .8.
+  o.p`
+  setMap(display)
+  converter()
+})
+
+onInput("s", () => {
+  input_direction = down
+  
+  display = map`...
+  .9.
+  o.p`
+  setMap(display)
+  converter()
+})
+
+onInput("a", () => {
+  input_direction = left
+  
+  display = map`...
+  .0.
+  o.p`
+  setMap(display)
   converter()
 })
 
 onInput("i", () => {
   input_colour = 0
-  converter()
-})
-
-onInput("j", () => {
-  input_colour = 3
-  converter()
-})
-
-onInput("k", () => {
-  input_colour = 2
+  
+  display = map`...
+  .i.
+  o.p`
+  setMap(display)
   converter()
 })
 
 onInput("l", () => {
   input_colour = 1
+  
+  display = map`...
+  .l.
+  o.p`
+  setMap(display)
   converter()
 })
+
+onInput("k", () => {
+  input_colour = 2
+  
+  display = map`...
+  .k.
+  o.p`
+  setMap(display)
+  converter()
+})
+
+onInput("j", () => {
+  input_colour = 3
+  
+  display = map`...
+  .j.
+  o.p`
+  setMap(display)
+  converter()
+})
+
+
+
+
 
 afterInput(() => {
   
