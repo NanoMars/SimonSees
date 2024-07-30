@@ -19,7 +19,7 @@ const right_yellow = "q"
 const right_red = "w"
 const right_green = "e"
 const right_blue = "r"
-const right = [right_yellow, right_red, up_green, right_blue]
+const right = [right_yellow, right_red, right_green, right_blue]
 
 const down_yellow = "a"
 const down_red = "s"
@@ -33,7 +33,7 @@ const left_green = "c"
 const left_blue = "v"
 const left = [left_yellow, left_red, left_green, left_blue]
 
-const directions = [up]
+const directions = [up, right, down, left]
 mode = 1
 
 const sequence = [up[0],down[3],left[1],right[3],right[3]]
@@ -323,17 +323,82 @@ level = map`
 .${sequence[sequence_loc]}.
 ...`
 
+input_direction = null
+
+input_colour = null
+
+input_sequence_loc = 0
+
+function converter(){
+  console.log(input_direction)
+  console.log(input_colour)
+  if (input_direction && input_colour != null) {
+    console.log("input_direction && input_colour")
+    if (input_direction[input_colour] == sequence[input_sequence_loc]) {
+      console.log("input_direction[input_colour] == sequence[input_sequence_loc]")
+
+      level = map`...
+      .${input_direction[input_colour]}.
+      ...`
+      setMap(level)
+      
+      input_direction = null
+      input_colour = null
+      
+      input_sequence_loc += 1
+      if (input_sequence_loc >= sequence.length - 1) {
+        sequence.push(directions[Math.floor(Math.random() * 4)][Math.floor(Math.random() * 4)]); // add one random thingy 
+        //play sequence
+        console.log("input_sequence_loc >= sequence.length - 1")
+      }
+    } else {
+      //fail
+    }
+  }
+}
 
 setMap(level)
 
 
+
+onInput("w", () => {
+  input_direction = up
+  converter()
+})
+
+onInput("a", () => {
+  input_direction = left
+  converter()
+})
+
 onInput("s", () => {
-  sequence_loc += 1
-  level = map`...
-.${sequence[sequence_loc]}.
-...`
-  setMap(level)
-  console.log(sequence_loc)
+  input_direction = down
+  converter()
+})
+
+onInput("d", () => {
+  input_direction = right
+  converter()
+})
+
+onInput("i", () => {
+  input_colour = 0
+  converter()
+})
+
+onInput("j", () => {
+  input_colour = 3
+  converter()
+})
+
+onInput("k", () => {
+  input_colour = 2
+  converter()
+})
+
+onInput("l", () => {
+  input_colour = 1
+  converter()
 })
 
 afterInput(() => {
