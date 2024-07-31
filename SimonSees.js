@@ -2,7 +2,7 @@
 First time? Check out the tutorial game:
 https://sprig.hackclub.com/gallery/getting_started
 
-@title: arrow colours
+@title: Simon Sees
 @author: 
 @tags: []
 @addedOn: 2024-07-30
