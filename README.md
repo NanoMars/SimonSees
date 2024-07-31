@@ -6,6 +6,8 @@
 
 Simon Sees is a twist on the classic Simon game, designed for [Hack Club's Sprig game console](https://sprig.hackclub.com/) and [Hack Club Arcade](https://hackclub.com/arcade/). In this version, players follow a sequence of colored directional arrows.
 
+[Play Simon Sees on Sprig](https://sprig.hackclub.com/~/UKMoUYIRwzXm8cVEa2ZJ)
+
 ## How to Play
 
 1. Memorize the sequence of colored arrows.
