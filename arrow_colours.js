@@ -36,9 +36,12 @@ const left = [left_yellow, left_red, left_green, left_blue]
 const directions = [up, right, down, left]
 
 
-const sequence = [up[0]]
+const sequence = []
 
 sequence_loc = 0
+
+sequence.push(directions[Math.floor(Math.random() * 4)][Math.floor(Math.random() * 4)]); // add one random thingy 
+play_sequence()
 
 const left_hint = "o"
 const right_hint = "p"
@@ -53,10 +56,7 @@ const right_display = "8"
 const down_display = "9"
 const left_display = "0"
 
-
-
-
-
+const game_over = "g"
 
 setLegend(
   [ up_yellow, bitmap`
@@ -501,6 +501,23 @@ LLLLLLLLLLLLLLLL
 .....LLL........
 ......LL........
 .......L........` ],
+  [ game_over, bitmap`
+................
+333.333.3.3.333.
+3...3.3.333.3...
+3...333.3.3.33..
+3.3.3.3.3.3.3...
+333.3.3.3.3.333.
+................
+................
+................
+333.3.3.333.333.
+3.3.3.3.3...3.3.
+3.3.3.3.33..33..
+3.3.3.3.3...3.3.
+333..3..333.3.3.
+................
+................` ],
 )
 
 display = map`
@@ -566,7 +583,27 @@ async function converter(){
         console.log("input_sequence_loc >= sequence.length")
       }
     } else {
-      //fail
+      let game_over = map`
+      ...
+      .g.
+      ...`;
+      setMap(game_over);
+      input_sequence_loc = 0
+      sequence_loc = 0
+      input_direction = null
+      input_colour = null
+      sequence.length = 0; // Clear the sequence array
+      await wait(2000);
+      sequence.push(directions[Math.floor(Math.random() * 4)][Math.floor(Math.random() * 4)]); // add one random thingy 
+      console.log("Before play sequence")
+      await play_sequence(); // Ensure this is awaited
+      console.log("Directly after play sequence")
+      let display = map`
+      ...
+      .${sequence[sequence_loc]}.
+      o.p`
+      setMap(display);
+      console.log("end of game over")
     }
   }
 }
