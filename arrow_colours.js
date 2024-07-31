@@ -9,6 +9,21 @@ https://sprig.hackclub.com/gallery/getting_started
 */
 
 
+const correctTune = tune`
+100: E4^100,
+100: B4^100,
+3000`;
+const gameOverTune = tune`
+300: B4^500,
+300: A4^500,
+300: G#4^500,
+300: G4^1200,
+14000`;
+const quickTone = tune`
+37.5: B5-10,
+1162.5`;
+
+
 const up_yellow = "1"
 const up_red = "2"
 const up_green = "3"
@@ -543,6 +558,7 @@ async function play_sequence() {
     o.p`;
     setMap(no_display);
     await wait(wait_time / 10);
+    playTune(quickTone)
     let display = map`...
     .${sequence[i]}.
     o.p`;
@@ -565,7 +581,7 @@ async function converter(){
     console.log("input_direction && input_colour")
     if (input_direction[input_colour] == sequence[input_sequence_loc]) {
       console.log("input_direction[input_colour] == sequence[input_sequence_loc]")
-
+      playTune(correctTune);
       display = map`...
       .${input_direction[input_colour]}.
       o.p`
@@ -583,6 +599,7 @@ async function converter(){
         console.log("input_sequence_loc >= sequence.length")
       }
     } else {
+      playTune(gameOverTune);
       let game_over = map`
       ...
       .g.
