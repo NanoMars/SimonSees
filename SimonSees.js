@@ -548,7 +548,7 @@ input_sequence_loc = 0
 
 score = 0
 
-if (!high_score) {
+if (typeof high_score === 'undefined') {
   high_score = 0
 } else {
   let high_score;
