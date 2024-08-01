@@ -546,11 +546,32 @@ input_colour = null
 
 input_sequence_loc = 0
 
+score = 0
+
+if (!high_score) {
+  high_score = 0
+} else {
+  let high_score;
+}
+
+
+
+addText(`Score: ${score}`, { x: 3, y: 1, color: color`0` }); // Display current score
+addText(`High Score: ${high_score}`, { x: 3, y: 2, color: color`0` }); // Display high score
+
+
+
+
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let playingSequence = false;
+
 async function play_sequence() {
+  playingSequence = true;
+  addText(`Score: ${score}`, { x: 3, y: 1, color: color`0` }); // Display current score
+  addText(`High Score: ${high_score}`, { x: 3, y: 2, color: color`0` }); // Display high score
   let wait_time = 1500; // Convert seconds to milliseconds
   for (let i = 0; i < sequence.length; i++) {
     let no_display = map`...
@@ -572,6 +593,7 @@ async function play_sequence() {
   ...
   o.p`;
   setMap(display);
+  playingSequence = false;
 }
 
 async function converter(){
@@ -592,6 +614,8 @@ async function converter(){
       
       input_sequence_loc += 1
       if (input_sequence_loc >= sequence.length) {
+        score++
+        high_score = Math.max(score, high_score);
         // wait here
         await wait(500); // Wait for 500 milliseconds
         sequence.push(directions[Math.floor(Math.random() * 4)][Math.floor(Math.random() * 4)]); // add one random thingy 
@@ -599,6 +623,7 @@ async function converter(){
         console.log("input_sequence_loc >= sequence.length")
       }
     } else {
+      score = 0
       playTune(gameOverTune);
       let game_over = map`
       ...
@@ -627,92 +652,37 @@ async function converter(){
 
 setMap(display)
 
+function handleInput(direction, displayChar) {
+  if (playingSequence) return;
 
-
-onInput("w", () => {
-  input_direction = up
-  
+  input_direction = direction;
   display = map`...
-  .7.
-  o.p`
-  setMap(display)
-  converter()
-})
+  .${displayChar}.
+  o.p`;
+  setMap(display);
+  converter();
+}
 
-onInput("d", () => {
-  input_direction = right
-  
+function handleColorInput(color, displayChar) {
+  if (playingSequence) return;
+
+  input_colour = color;
   display = map`...
-  .8.
-  o.p`
-  setMap(display)
-  converter()
-})
+  .${displayChar}.
+  o.p`;
+  setMap(display);
+  converter();
+}
 
-onInput("s", () => {
-  input_direction = down
-  
-  display = map`...
-  .9.
-  o.p`
-  setMap(display)
-  converter()
-})
-
-onInput("a", () => {
-  input_direction = left
-  
-  display = map`...
-  .0.
-  o.p`
-  setMap(display)
-  converter()
-})
-
-onInput("i", () => {
-  input_colour = 0
-  
-  display = map`...
-  .i.
-  o.p`
-  setMap(display)
-  converter()
-})
-
-onInput("l", () => {
-  input_colour = 1
-  
-  display = map`...
-  .l.
-  o.p`
-  setMap(display)
-  converter()
-})
-
-onInput("k", () => {
-  input_colour = 2
-  
-  display = map`...
-  .k.
-  o.p`
-  setMap(display)
-  converter()
-})
-
-onInput("j", () => {
-  input_colour = 3
-  
-  display = map`...
-  .j.
-  o.p`
-  setMap(display)
-  converter()
-})
-
-
-
-
+onInput("w", () => handleInput(up, '7'));
+onInput("d", () => handleInput(right, '8'));
+onInput("s", () => handleInput(down, '9'));
+onInput("a", () => handleInput(left, '0'));
+onInput("i", () => handleColorInput(0, 'i'));
+onInput("l", () => handleColorInput(1, 'l'));
+onInput("k", () => handleColorInput(2, 'k'));
+onInput("j", () => handleColorInput(3, 'j'));
 
 afterInput(() => {
-  
-})
+  // Any other code that should run after input
+});
