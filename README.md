@@ -13,6 +13,5 @@ Simon Sees is a twist on the classic Simon game, designed for [Hack Club's Sprig
 1. Memorize the sequence of colored arrows.
 2. Use the left directional pad for directions (WASD) and the right directional pad for colors (IJKL).
 3. Replicate the sequence to advance. A new colored arrow is added after each correct sequence.
-4. Shields (badges) are displayed to indicate the direction.
 
 Enjoy the challenge of Simon Sees and test your memory skills!
